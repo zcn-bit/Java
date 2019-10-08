@@ -1,0 +1,46 @@
+class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if (l1 == null) return l2;
+        if (l2 == null) return l1;
+        ListNode result = null;
+        ListNode last = null;
+        ListNode cur1 = l1;
+        ListNode cur2 = l2;
+        两个结行比较，小的结点尾插到新链表上
+        尾插：空或非空链表
+        while (cur1 != null && cur2 != null) {
+            if (cur1.val <= cur2.val) {
+                ListNode next = cur1.next;2
+                
+                if (result == null) {
+                    result = cur1;
+                } else {
+                    last.next = cur1;
+                }
+                last = cur1;
+                
+                cur1 = next;
+                更新last或者next
+            } else {
+                ListNode next = cur2.next;
+                
+                if (result == null) {
+                    result = cur2;
+                } else {
+                    last.next = cur2;
+                }
+                last = cur2;
+                
+                cur2 = next;
+            }
+        }
+        
+        if (cur1 != null) {//遍历
+            last.next = cur1;
+        } else {
+            last.next = cur2;
+        }
+        
+        return result;
+    }
+}
