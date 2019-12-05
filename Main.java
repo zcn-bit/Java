@@ -1,60 +1,20 @@
 
 
-    import java.util.*;
-import java.math.*;
-
+ import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
     public class Main{
         public static void main(String[] args){
-            int[] count = new int[] {0,0,0,0,0,0,0,0,0,0};
-            Scanner sc = new Scanner(System.in);
-            BigInteger N;
-            N = sc.nextBigInteger();
-            Vector<Integer> num = new Vector<>();
-            do {
-                BigInteger M = N.mod(BigInteger.valueOf(10));
-                num.add(M.intValue());
-                N = N.divide(BigInteger.valueOf(10));
-            } while (N.compareTo(BigInteger.valueOf(0)) > 0);
-            for (int i = 0; i < num.size(); ++i) {
-                switch (num.get(i)) {
-                    case 0:
-                        ++count[0];
-                        break;
-                    case 1:
-                        ++count[1];
-                        break;
-                    case 2:
-                        ++count[2];
-                        break;
-                    case 3:
-                        ++count[3];
-                        break;
-                    case 4:
-                        ++count[4];
-                        break;
-                    case 5:
-                        ++count[5];
-                        break;
-                    case 6:
-                        ++count[6];
-                        break;
-                    case 7:
-                        ++count[7];
-                        break;
-                    case 8:
-                        ++count[8];
-                        break;
-                    case 9:
-                        ++count[9];
-                        break;
-                    default:
-                        break;
+            Scanner in = new Scanner(System.in);
+            while(in.hasNext()){
+                char[] c = in.next().toCharArray();
+                StringBuffer sb = new StringBuffer();
+                Set<Character> set = new HashSet<Character>();
+                for(int i = 0;i<c.length;i++){
+                    if(set.add(c[i]))//很巧妙
+                        sb.append(c[i]);
                 }
-            }
-            for (int j = 0; j < 10; ++j) {
-                if (count[j] != 0)
-                    System.out.println(j + ":" + count[j]);
+                System.out.println(sb.toString());
             }
         }
-
-}
+    }
