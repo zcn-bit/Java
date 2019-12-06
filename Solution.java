@@ -1,24 +1,26 @@
+import java.util.LinkedList;
+
 public class Solution {
-
-
-        public int[] multiply(int[] A) {
-            int length = A.length;
-            int[] B = new int[length];
-            if(length != 0 ){
-                B[0] = 1;
-                //计算下三角连乘
-                for(int i = 1; i < length; i++){
-                    B[i] = B[i-1] * A[i-1];
-                }
-                int temp = 1;
-                //计算上三角
-                for(int j = length-2; j >= 0; j--){
-                    temp *= A[j+1];
-                    B[j] *= temp;
-                }
-            }
-            return B;
+    public ListNode Merge(ListNode list1,ListNode list2) {
+        if(list1==null){
+            return  list2;
+        }
+        if(list2==null){
+            return  list1;
         }
 
 
+        if(list1.val<=list2.val){
+            list1.next=Merge(list.next,list2);
+
+            return list1;
+        }else{
+            list2.next=Merge(list1,list2.next);
+            return list2;
+        }
+
+
+
+
+    }
 }
