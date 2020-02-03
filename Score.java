@@ -1,45 +1,30 @@
-import java.util.Scanner;
 
+import java.util.*;
+//思路就是存储每个方块出现的次数，最后求次数最小的方块，即为得分数。
 public class Score {
 
-
-        private static String[] names;
-        private static int[] grades;
-        private static boolean compare(int i, int j, int flag){
-            return flag == 0 ? grades[i] > grades[j] : grades[i] < grades[j];
-        }
-        private static void exch(int i, int j){
-            String tempS = names[j];
-            int tempG = grades[j];
-            names[j] = names[i];
-            grades[j] = grades[i];
-            names[i] = tempS;
-            grades[i] = tempG;
-        }
-        public static void sort(int flag){
-            for(int i = 1; i < names.length; i++)
-                for(int j = i; j > 0 && compare(j,j - 1,flag); j--){
-                    exch(j,j - 1);
-                }
-        }
-        public static void main(String[] args) {
-            // TODO Auto-generated method stub
-            Scanner input = new Scanner(System.in);
-            while(input.hasNext()){
-                int n = input.nextInt();//人数
-                int flag = input.nextInt();
-                names = new String[n];
-                grades = new int[n];
-                for(int i = 0; i < n; i++){
-                    names[i] = input.next();
-                    grades[i] = input.nextInt();
-                }
-                sort(flag);
-                for(int i = 0; i < n; i++){
-                    System.out.println(names[i] + " " + grades[i]);
-                }
+    public static void main(String[] args){
+        Map<Integer, Integer> map = new HashMap<>();
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        for(int i = 0; i < m; i++){
+            int temp = sc.nextInt();
+            if(map.containsKey(temp)){
+                map.put(temp, map.get(temp) + 1);
+            }else{
+                map.put(temp, 1);
             }
         }
-
-
+        //判断每个元素出现的次数，次数最小的就是得分
+        int score = Integer.MAX_VALUE;
+        if(map.size() == n){ //保证n列上只出现n个不同的方块
+            for(Integer key : map.keySet()){
+                score = Math.min(score, map.get(key));
+            }
+        }else{
+            score = 0;
+        }
+        System.out.print(score);
+    }
 }
