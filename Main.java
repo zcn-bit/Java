@@ -1,23 +1,28 @@
 
-import java.util.*;
-//贪心算法求解：1.当遇到第一个'.'时，表示该位置需要被照亮，此时不安装路灯，在它的下一个位置安装路灯，即sum+1;
-//因为该路灯位置的下一个位置已经被照亮了，因此下标+2
-//遇到‘X’时跳过，因为不需要安装
-public class Main{
+import java.util.Scanner;
+public class Main{//关于dp算法
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
-        int t = sc.nextInt();
-        for(int i = 0; i < t; i++){
+        while(sc.hasNext()){
             int n = sc.nextInt();
-            String s = sc.next();
-            int sum = 0;
-            for(int j = 0; j < n; j++){
-                if(s.charAt(j) == '.'){
-                    sum++;
-                    j = j + 2;
+            int sum = sc.nextInt();
+            int[] num = new int[n];
+            for(int i=0;i<n;i++){
+                num[i] = sc.nextInt();
+            }
+            long[] count = new long[sum+1];
+            count[0] = 1;
+            for(int i=0;i<n;i++){
+                if(num[i]<=sum){
+                    for(int j=sum;j>=0;j--){
+                        if(count[j]>0 && j+num[i]<=sum){
+                            count[j+num[i]] += count[j];
+                        }
+                    }
                 }
             }
-            System.out.println(sum);
+            System.out.println(count[sum]);
         }
     }
 }
+
