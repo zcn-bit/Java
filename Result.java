@@ -1,23 +1,39 @@
+import java.util.Scanner;
+
 public class Result {
-    public double Power(double base, int exponent) {
-        if (exponent == 0) {
-            return 1.0;
-        }
-        if (base - 0.0 == 0.00001 || base - 0.0 == -0.00001)  {
-            if (exponent < 0) {
-                throw new RuntimeException("除0异常");
-            }else{
-                return 0.0;
+
+    public static void jiCheck(char[] str){
+        for(int i=0;i<str.length;i++){//单独处理数组每一个元素
+            int [] result=new int [8];
+            int count=0;
+            int one=0x01;
+            for(int k=7;k>0;k--){
+
+                result[k]=(str[i]&one)==0?0:1;
+             if(result[k]==1){
+                 count++;
+             }
+             one=one<<1;//扩大两倍
+
             }
+            if(count%2==0){
+                result[0]=1;
+            }
+            for(int j=0;j<result.length;j++){
+                System.out.print(result[j]);
+            }
+            System.out.println();
+
         }
-        return exponent > 0 ? getPower(base, exponent) : 1/getPower(base, -exponent);
+    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNext()) {
+            String string = scanner.nextLine();
+            char[] str = string.toCharArray();
+            jiCheck(str);
+        }
     }
 
-    public static double getPower(double base, int e) {
-        if (e == 1) {
-            return base;
-        }
-        double halfPower = getPower(base, e >> 1);
-        return (e & 1) != 0 ? base * halfPower * halfPower : halfPower * halfPower;
-    }
+
 }
