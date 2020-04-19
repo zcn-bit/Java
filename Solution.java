@@ -1,17 +1,37 @@
+
 public class Solution {
-
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int m = sc.nextInt();
-        int count = 0;
-        for(int i=n;i<=m;i++){
-            if(i%3%2==0){
-                count++;
-            }
+    private int getLength(ListNode head) {
+        int len = 0;
+        for (ListNode c = head; c != null; c = c.next) {
+            len++;
         }
-        System.out.println(count);
 
+        return len;
+    }
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        int lenA = getLength(headA);
+        int lenB = getLength(headB);
+
+        ListNode longer = headA;
+        ListNode shorter = headB;
+        int diff = lenA - lenB;
+        if (lenA < lenB) {
+            longer = headB;
+            shorter = headA;
+            diff = lenB - lenA;
+        }
+
+        for (int i = 0; i < diff; i++) {
+            longer = longer.next;
+        }
+
+        while (longer != shorter) {
+            longer = longer.next;
+            shorter = shorter.next;
+        }
+
+        return longer;
     }
 }
+
+
