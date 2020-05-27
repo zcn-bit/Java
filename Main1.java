@@ -1,40 +1,63 @@
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Scanner;
 
-
-
-        import java.util.*;
-        public class Main1 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine();
-        StringBuilder sb = new StringBuilder(s);//为了统一处理，
-        sb.append("R");//在最右边加一个“R”
-        sb.insert(0, "L");//在最左边加一个“L”
-        List<Integer> v = new ArrayList<>();//记录含有L或R的下标位置
-        for(int i = 0; i < sb.length(); ++i){
-            if(sb.charAt(i) == 'L' || sb.charAt(i) == 'R')
-                v.add(i);;
-        }
-        for(int p = 0; p < v.size() - 1; ++p){//按RL区间端点分类，共有4类
-            int i = v.get(p), j = v.get(p + 1);//一个区间一个区间处理
-            char c1 = sb.charAt(i), c2 = sb.charAt(j);
-            if(c1 == 'L' && c2 == 'L'){
-                for(int k = i + 1; k < j; ++k)
-                    sb.setCharAt(k, 'L');
-            }
-            if(c1 == 'L' && c2 == 'R'){}//这种什么也不用做
-            if(c1 == 'R' && c2 == 'L'){
-                for(int k = i + 1; k < (double)(j + i)/2; ++k)
-                    sb.setCharAt(k, 'R');
-                for(int k = j - 1; k > (double)(j + i)/2; --k)
-                    sb.setCharAt(k, 'L');
-            }
-            if(c1 == 'R' && c2 == 'R'){
-                for(int k = i + 1; k < j; ++k)
-                    sb.setCharAt(k, 'R');
+public class Main1 {
+    public static int bin(int num,int [] desks){//人数 桌子容纳人数
+        int left=0;
+        int right=desks.length-1;
+        int mid=0;
+        while (left<=right){
+            mid=(left+right)/2;
+            if(num<=desks[mid]){//选择最小的桌子
+                right=mid-1;
+            }else {
+                left=mid+1;
             }
         }
-        sb.deleteCharAt(sb.length() - 1);
-        sb.deleteCharAt(0);//把开始加的那两张去掉
-        System.out.println(sb);
+        return left;//坐的桌子下标
     }
+   public static void main(String[] args){
+       Scanner scanner=new Scanner(System.in);
+       int n=scanner.nextInt();
+       int m=scanner.nextInt();
+       int[] desks=new int[n];
+       int[] tmp=new int[n];
+       for(int i=0;i<n;i++){
+           desks[i]=scanner.nextInt();
+       }
+       Arrays.sort(desks);//桌子人数 默认升序
+       //m批客人   b c
+       int[][] man=new int[m][2];
+       for(int i=0;i<m;i++){
+           man[i][0]=scanner.nextInt();
+           man[i][1]=scanner.nextInt();
+       }
+       //对m批客人排序
+       Arrays.sort( man, new Comparator<int[]>() {//比较器比较元素类型是数组
+           @Override
+           public int compare(int[] o1, int[] o2) {
+               return o2[1]-o1[1];//对消费额降序排序
+           }
+       });
+       long sum=0;
+       for (int i=0;i<m;i++){
+           if(desks[n-1]>=man[i][0]){//保证一个最大的前提 最大桌子可容纳
+               int num=man[i][0];
+               int p=man[i][1];
+               int index=bin(num,desks);
+               while (index<n && tmp[index]==1){//有人坐了++
+                   index++;
+               }
+               if(index<n){//合理下标
+                  sum+=p;//
+                  tmp[index]=1;//客人已经坐下，标记为1，有人了
+               }
+
+           }
+       }
+       System.out.println(sum);
+
+   }
+
 }
