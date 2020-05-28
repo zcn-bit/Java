@@ -1,36 +1,61 @@
+
+
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main5 {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int K = sc.nextInt();
-        int W = sc.nextInt();
-        ArrayList<Integer> ai = new ArrayList<>();//保存结束时的点数
-        ArrayList<Double> ai2 = new ArrayList<>();//保存相应点数出现的概率
-        getWay(K, W, ai, 0, ai2, 1);
-        double c = 0;
-        Iterator<Integer> it = ai.iterator();
-        Iterator<Double> it2 = ai2.iterator();
-        while (it.hasNext()) {
-            if (it.next() <= N)
-                c += it2.next();
-            else
-                it2.next();
+    private static boolean match(String matchStr, String str, int matchIdx, int idx) {
+        if (matchIdx == matchStr.length() && idx == str.length()) {
+            return true;
         }
-        System.out.println(String.format("%.5f", c));
+        if (idx >= str.length() && matchIdx < matchStr.length() && matchStr.charAt(matchIdx) == '*') {
+            return match(matchStr, str, matchIdx + 1, idx);
+        }
+        if (matchIdx >= matchStr.length() || idx >= str.length()) {
+            return false;
+        }
+        if (matchStr.charAt(matchIdx) != '*' && matchStr.charAt(matchIdx) != str.charAt(idx)) {
+            return false;
+        }
+        boolean flag = false;
+        if (matchStr.charAt(matchIdx) == '*') {
+            flag = match(matchStr, str, matchIdx + 1, idx) || match(matchStr, str, matchIdx, idx + 1);
+        }
+        if (matchStr.charAt(matchIdx) == str.charAt(idx)) {
+            flag |= match(matchStr, str, matchIdx + 1, idx + 1);
+        }
+        return flag;
     }
 
-    private static void getWay(int k, int m, ArrayList<Integer> ai, int count, ArrayList<Double> ai2, double num) {
-        if (count >= k) {
-            ai.add(count);
-            ai2.add(num);
-            return;
+    private static List<Integer[]> getMatchPosAndLen(String matchStr, String str) {
+        List<Integer[]> ans = new ArrayList<>();
+        for (int i = 0; i < str.length(); ++i) {
+            if (matchStr.charAt(0) != '*' && matchStr.charAt(0) != str.charAt(i)) {
+                continue;
+            }
+            for (int j = i; j < str.length(); ++j) {
+                if (matchStr.charAt(matchStr.length() - 1) != '*' && matchStr.charAt(matchStr.length() - 1) != str.charAt(j)) {
+                    continue;
+                }
+                if (match(matchStr, str.substring(i, j + 1), 0, 0)) {
+                    ans.add(new Integer[]{i, j - i + 1});
+                }
+            }
         }
-        for (int i = 1; i <= m; i++) {
-            getWay(k, m, ai, count + i, ai2, num / m);
+        if (ans.size() == 0) {
+            ans.add(new Integer[]{-1, 0});
         }
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String str = in.next();
+        List<Integer[]> list = getMatchPosAndLen(matchStr, str);
+        for (Integer[] arr : list) {
+            System.out.println(arr[0] + " " + arr[1]);
+        }
+
     }
 }
