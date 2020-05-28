@@ -1,32 +1,38 @@
-import java.util.*;
-//员工的重要性
-public class Main4 {
 
-    class Employee {
-        public int id;
-        public int importance;
-        public List<Integer> subordinates;
-    };
-        public int getImportance(List<Employee> employees, int id) {
-            if(employees == null || employees.size() == 0) {
-                return 0;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+public class Main4{
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        while(sc.hasNext()){
+            int n = sc.nextInt();
+            int[][] matrix = new int[n][n];
+            ArrayList<int[][]> al = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    matrix[i][j] = sc.nextInt();
+                    if(matrix[i][j]==1){
+                        int[][] xy = new int[1][2];
+                        xy[0][0]=i;
+                        xy[0][1]=j;
+                        al.add(xy);
+                    }
+                }
             }
-            int res = 0;
-            Queue<Integer> q = new LinkedList<>();
-            q. offer(id);
-//把员工信息保存在map中，方便查询
-            Map<Integer, Employee> m = new HashMap<>();
-            for (Employee e : employees)
-                m. put(e.id, e);//k v
-//遍历队列
-            while (!q. isEmpty()) {
-                int t = q.peek();
-                q.poll() ;
-                res += m.get(t).importance;//
-                for (int num : m.get(t).subordinates) //得到直系下属的id
-                    q.offer(num) ;
+            int res = Integer.MAX_VALUE;
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    int temp=0;
+                    if(matrix[i][j]==0){
+                        for (int k = 0; k < al.size(); k++) {
+                            temp+=Math.abs(al.get(k)[0][0]-i)+Math.abs(al.get(k)[0][1]-j);
+                        }
+                        res = res>temp?temp:res;
+                    }
+                }
             }
-            return res;
+            System.out.println(res==Integer.MAX_VALUE?-1:res);
         }
-
+    }
 }
