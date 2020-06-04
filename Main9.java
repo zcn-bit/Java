@@ -1,55 +1,105 @@
 
 
-        import java.io.BufferedReader;
-        import java.io.IOException;
-        import java.io.InputStreamReader;
-        import java.util.ArrayList;
-        import java.util.HashSet;
+        import java.io.BufferedInputStream;
+        import java.util.ArrayDeque;
+        import java.util.Deque;
+        import java.util.Scanner;
 
-
-
-public class Main9 {
-
-    //还是python大法好啊，十几行....
-    public static void main(String[] args) throws IOException {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        String s = bf.readLine().trim().split("\"")[1];
-        String[] split = bf.readLine().trim().split("\"");
-        HashSet<String> dic = new HashSet<>();
-        for (int i = 0; i < split.length; i++) {
-            if (i % 2 != 0) {
-                dic.add(split[i]);
+public class Main9{
+    private static class BottleSpace{
+        int [] spaces;
+        int step;
+        static boolean [] isVisiteds=new boolean[64*64*64*64];
+        BottleSpace(int [] spaces, int step){
+            this.spaces = new int[spaces.length];
+            System.arraycopy(spaces,0,this.spaces,0, spaces.length);
+            this.step=step;
+        }
+        //移动from的瓶子的水到to,直到to瓶子满
+        public static void mov(int[] srcSpaces, int from, int to, BottleSpace maxBottle){
+            if(srcSpaces[from]==0) return ;
+            int diff;
+            if((diff=srcSpaces[from]+srcSpaces[to]-maxBottle.spaces[to])>=0){
+                srcSpaces[from]=diff;
+                srcSpaces[to]=maxBottle.spaces[to];
+            }else{
+                srcSpaces[to]=srcSpaces[from]+srcSpaces[to];
+                srcSpaces[from]=0;
             }
         }
-        ArrayList<String> ans = new ArrayList<>();
-        backtrack(dic, new StringBuilder(), s, ans);
-        //下面就是字符串的拼接了..........
-        if (ans.size() == 0){
-            System.out.println("[]");
-            return;
+        //判断该瓶子系列是否已被访问,是返回true，否返回false，并标志为true
+        public static boolean isVisited(int []bottles){
+            int index= getIndexBottles(bottles);
+            if(isVisiteds[index]) return true;
+            else {
+                isVisiteds[index]=true;
+                return false;
+            }
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append('[');
-        for (int i = 0; i < ans.size() - 1; i++){
-            String s1 = ans.get(i);
-            sb.append(s1.substring(0,s1.length()-1)).append(',').append(" ");
+        //获取当前瓶子系列状态
+        //瓶子容量为>=0&&<64,用6位表示,0-5为1瓶容量,6-11为2瓶容量,类推
+        public static int getIndexBottles(int []bottles){
+            int index=0;
+            for(int i = 0; i<bottles.length; i++){
+                index+=(bottles[i]<<(6*i));
+            }
+            return index;
         }
-        String s2 = ans.get(ans.size()-1);
-        sb.append(s2.substring(0,s2.length()-1)).append(']');
-        System.out.println(sb.toString());
     }
-
-    //很标准的回溯算法
-    private static void backtrack(HashSet<String> dic, StringBuilder sb, String s, ArrayList<String> list) {
-        if (s.isEmpty()) {
-            list.add(sb.toString());
-            sb.delete(0, sb.length());//组合成功记得清零
-            return;
+    public static void main(String[] args) {
+        final int bottleSize=4;
+        Scanner in=new Scanner(new BufferedInputStream(System.in));
+        int []s=new int[bottleSize];
+        int []t=new int[bottleSize];
+        for(int i=0;i<bottleSize;i++){
+            s[i]=in.nextInt();
         }
-        for (String item : dic) {
-            if (s.startsWith(item)) {
-                backtrack(dic, sb.append(item).append(" "), s.substring(item.length()), list);
+        for(int i=0;i<bottleSize;i++){
+            t[i]=in.nextInt();
+        }
+        in.close();
+
+        int goalIndex=BottleSpace.getIndexBottles(t);//目标瓶子系列下标
+        BottleSpace sBottle=new BottleSpace(s,0);
+        Deque<BottleSpace> bottleQueue=new ArrayDeque<>();
+        bottleQueue.add(new BottleSpace(new int[bottleSize],0));
+        BottleSpace.isVisiteds[0]=true;
+        //BFS
+        while(!bottleQueue.isEmpty()){
+            BottleSpace curBottle=bottleQueue.pollFirst();
+            int []cur=curBottle.spaces;
+            int step=curBottle.step;
+            if(BottleSpace.getIndexBottles(cur)==goalIndex){
+                System.out.println(step);
+                return ;
+            }
+
+            for(int i=0;i<bottleSize;i++){
+                int original=cur[i];
+                //将瓶子i清空
+                cur[i]=0;
+                if(!BottleSpace.isVisited(cur))//该瓶子系列未被访问
+                    bottleQueue.addLast(new BottleSpace(cur,step+1));
+                //将瓶子i填满
+                cur[i]=sBottle.spaces[i];
+                if(!BottleSpace.isVisited(cur))
+                    bottleQueue.addLast(new BottleSpace(cur,step+1));
+                cur[i]=original;
+            }
+
+            //将瓶子i的水倒到瓶子j,直到瓶子j满
+            for(int i=0;i<bottleSize;i++){
+                for(int j=0;j<bottleSize;j++){
+                    if(i!=j){
+                        int []curCopy=new int[cur.length];
+                        System.arraycopy(cur,0,curCopy,0,cur.length);
+                        BottleSpace.mov(curCopy,i,j,sBottle);
+                        if(!BottleSpace.isVisited(curCopy))
+                            bottleQueue.add(new BottleSpace(curCopy,step+1));
+                    }
+                }
             }
         }
+        System.out.println(-1);
     }
 }
