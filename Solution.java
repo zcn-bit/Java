@@ -1,22 +1,35 @@
-
+import java.util.ArrayList;
 public class Solution {
-    public int minPathSum(int[][] grid) {
-        int m=grid.length;
-        int n=grid[0].length;
-        int[][] minimumPathSum=new int[m][n];//重新搞一个数组，存放目前为止的最小路径和
-        minimumPathSum[0][0]=grid[0][0];//它是初始值，解决问题的根源
-        for (int i=1;i<m;i++){//处理最左一列
-           minimumPathSum[i][0]=grid[i][0]+minimumPathSum[i-1][0];
-        }//lie
-        for (int j=1;j<n;j++){//处理最上一行
-            minimumPathSum[0][j]=grid[0][j]+minimumPathSum[0][j-1];
+    public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
+
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        if(k<= 0 || k > input.length)return result;
+        //初次排序，完成k个元素的排序
+        for(int i = 1; i< k; i++){
+            int j = i-1;
+            int unFindElement = input[i];
+            while(j >= 0 && input[j] > unFindElement){
+                input[j+1] = input[j];
+                j--;
+            }
+
+            input[j+1] = unFindElement;
         }
-        for (int i=1;i<m;i++){
-            for (int j=1;j<n;j++){//处理内层矩形框数组
-                minimumPathSum[i][j]=Math.min(minimumPathSum[i][j-1],minimumPathSum[i-1][j])+grid[i][j];
+        //遍历后面的元素 进行k个元素的更新和替换
+        for(int i = k; i < input.length; i++){
+            if(input[i] < input[k-1]){
+                int newK = input[i];
+                int j = k-1;
+                while(j >= 0 && input[j] > newK){
+                    input[j+1] = input[j];
+                    j--;
+                }
+                input[j+1] = newK;
             }
         }
-        return minimumPathSum[m-1][n-1];
-
+        //把前k个元素返回
+        for(int i=0; i < k; i++)
+            result.add(input[i]);
+        return result;
     }
 }
