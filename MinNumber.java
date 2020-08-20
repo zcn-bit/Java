@@ -1,32 +1,27 @@
-import java.util.List;
-        import java.util.Scanner;
 
 public class MinNumber {
-
-
-
-    public static void main(String[] args) {
-        Scanner in=new Scanner(System.in);
-        int[] arr=new int[10];//存放输入的10个数
-        for(int i=0;i<arr.length;i++){
-            arr[i]=in.nextInt();//jieshou
+    public int minNumberInRotateArray(int[] array) {
+        int i = 0, j = array.length - 1;
+        if (array[i] < array[j]) { // 2
+            return array[i];
         }
-        in.close();
-        for(int i=1;i<arr.length;i++){//0不能开头
-            if(arr[i]!=0){//如果等于0.往后延，因为要找小的数，所以从前面找
-                System.out.print(i);//这个数个数不为0，先打印作为开头
-                arr[i]--;//个数-1
-                break;
+        if (array[i] == array[j] && array[i] == array[(i + j) >> 1]) { // 3
+            int min = array[i];
+            for (; i <= j; i++) {
+                if (array[i] < min) {
+                    min = array[i];
+                }
             }
-        }//为了找到开头
-        for(int i=0;i<arr.length;i++){
-            while(arr[i]>0){//从前往后。只要个>0.循坏打印这个数
-                System.out.print(i);
-                arr[i]--;//个数--
+            return min;
+        }
+        while (i + 1 < j) { // 1
+            int mid = (i + j) >> 1;
+            if (array[mid] >= array[i]) {
+                i = mid;
+            } else if (array[mid] <= array[j]) {
+                j = mid;
             }
         }
-
-
+        return array[j];
     }
-
 }
